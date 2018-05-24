@@ -1,6 +1,12 @@
 package com.bhaktijkoli.smokedetector;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
@@ -28,7 +34,12 @@ public class MQTTHelper {
     final String username = "admin";
     final String password = "root";
 
-    public MQTTHelper(Context context){
+    NotificationCompat.Builder nBuilder;
+
+    private static final int NOTIFICATION_ID = 1;
+    private static final String NOTIFICATION_CHANNEL_ID = "my_notification_channel";
+
+    public MQTTHelper(final Context context){
 
         mqttAndroidClient = new MqttAndroidClient(context, serverUri, clientId);
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
@@ -45,6 +56,30 @@ public class MQTTHelper {
             @Override
             public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
                 Log.w("Mqtt", mqttMessage.toString());
+
+                NotificationManager nManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationChannel nChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "My Notifications", NotificationManager.IMPORTANCE_DEFAULT);
+
+                    // Configure the notification channel.
+                    nChannel.setDescription("Channel description");
+                    nChannel.enableLights(true);
+                    nChannel.setLightColor(Color.RED);
+                    nChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
+                    nChannel.enableVibration(true);
+                    nManager.createNotificationChannel(nChannel);
+                }
+
+                NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                        .setVibrate(new long[]{0, 100, 100, 100, 100, 100})
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setTicker("Smoke Detector Alert")
+                        .setWhen(System.currentTimeMillis())
+                        .setContentTitle("Smoke Detector")
+                        .setContentText("Smoke Detected !");
+
+                nManager.notify(NOTIFICATION_ID, nBuilder.build());
             }
 
             @Override
@@ -53,6 +88,8 @@ public class MQTTHelper {
             }
         });
         connect();
+        nBuilder = new NotificationCompat.Builder(context);
+        nBuilder.setAutoCancel(false);
     }
 
     public void setCallback(MqttCallbackExtended callback) {
