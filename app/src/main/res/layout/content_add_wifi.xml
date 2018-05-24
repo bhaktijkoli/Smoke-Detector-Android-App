@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.bhaktijkoli.smokedetector.WifiActivity"
-    tools:showIn="@layout/activity_wifi">
+    tools:context="com.bhaktijkoli.smokedetector.AddWifiActivity"
+    tools:showIn="@layout/activity_add_wifi">
 
 </android.support.constraint.ConstraintLayout>

@@ -27,8 +27,8 @@
         <service android:name="org.eclipse.paho.android.service.MqttService" />
 
         <activity
-            android:name=".WifiActivity"
-            android:label="@string/title_activity_wifi"
+            android:name=".AddWifiActivity"
+            android:label="@string/title_activity_add_wifi"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
