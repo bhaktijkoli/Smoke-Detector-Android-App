@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
+    MQTTHelper mqttHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mqttHelper = new MQTTHelper(getApplicationContext());
     }
 
     @Override
