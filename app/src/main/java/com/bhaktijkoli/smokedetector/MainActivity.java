@@ -32,9 +32,6 @@ public class MainActivity extends AppCompatActivity {
         mqttHelper = new MQTTHelper(getApplicationContext());
 
         new HttpGetRequest().execute();
-
-        Intent intent = new Intent(getApplicationContext(), AddWifiActivity.class);
-        startActivity(intent);
     }
 
     @Override
