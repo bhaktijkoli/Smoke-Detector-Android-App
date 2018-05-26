@@ -30,9 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mqttHelper = new MQTTHelper(getApplicationContext());
-        Intent intent = new Intent(getApplicationContext(), AddWifiActivity.class);
-        startActivity(intent);
-//        new HttpGetRequest().execute();
+        new HttpGetRequest().execute();
     }
 
     @Override
@@ -61,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     class HttpGetRequest extends AsyncTask<String, Void, String> {
         public static final String REQUEST_URL = "http://192.168.4.1/";
         public static final String REQUEST_METHOD = "GET";
-        public static final int READ_TIMEOUT = 15000;
+        public static final int READ_TIMEOUT = 5000;
         public static final int CONNECTION_TIMEOUT = 15000;
 
         @Override

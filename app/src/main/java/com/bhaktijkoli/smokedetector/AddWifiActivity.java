@@ -66,6 +66,7 @@ public class AddWifiActivity extends AppCompatActivity {
             public void onClick(View view) {
                 pDialog = new ProgressDialog(AddWifiActivity.this);
                 pDialog.setMessage("Please wait...");
+                pDialog.setCanceledOnTouchOutside(false);
                 pDialog.show();
                new HttpGetRequest().execute();
             }
