@@ -10,9 +10,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import org.json.JSONException;
@@ -30,6 +34,7 @@ public class AddWifiActivity extends AppCompatActivity {
     private EditText etSSID;
     private EditText etPassword;
     private Button btnConnect;
+    private CheckBox checkShowPassword;
     private ProgressDialog pDialog;
 
     @Override
@@ -42,7 +47,19 @@ public class AddWifiActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         etSSID = (EditText) findViewById(R.id.etSSID);
         etPassword = (EditText) findViewById(R.id.etPassword);
+        checkShowPassword = (CheckBox) findViewById(R.id.checkShowPassword);
         btnConnect = (Button) findViewById(R.id.btnConnect);
+
+        checkShowPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(checkShowPassword.isChecked()) {
+                    etPassword.setTransformationMethod(null);
+                } else {
+                    etPassword.setTransformationMethod(new PasswordTransformationMethod());
+                }
+            }
+        });
 
         btnConnect.setOnClickListener(new View.OnClickListener() {
             @Override

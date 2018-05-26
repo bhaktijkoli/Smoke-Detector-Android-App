@@ -43,6 +43,13 @@
             android:ems="10"
             android:inputType="textPassword" />
 
+        <CheckBox
+            android:id="@+id/checkShowPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Show password" />
+
         <Button
             android:id="@+id/btnConnect"
             android:layout_width="match_parent"
