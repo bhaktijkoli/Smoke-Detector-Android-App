@@ -1,6 +1,8 @@
 package com.bhaktijkoli.smokedetector;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -95,6 +97,16 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), WifiScanActivity.class);
                 startActivity(intent);
             } else {
+                pDialog.dismiss();
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("WiFi Configuration").setMessage("Fail to connect to the device, please make sure you are connected to the device wifi.");
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         }
     }
