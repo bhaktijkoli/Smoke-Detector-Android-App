@@ -3,33 +3,31 @@ package com.bhaktijkoli.smokedetector;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 
 public class AddWifiActivity extends AppCompatActivity {
+
+    public static final MediaType JSON = MediaType.parse("application/json");
 
     private EditText etSSID;
     private EditText etPassword;
@@ -68,64 +66,41 @@ public class AddWifiActivity extends AppCompatActivity {
                 pDialog.setMessage("Please wait...");
                 pDialog.setCanceledOnTouchOutside(false);
                 pDialog.show();
-               new HttpGetRequest().execute();
+                new postConnectRequest().execute();
             }
         });
     }
 
-    class HttpGetRequest extends AsyncTask<String, String, String> {
-        public static final String REQUEST_URL = "http://192.168.4.1/connect";
-        public static final String REQUEST_METHOD = "POST";
-        public static final int READ_TIMEOUT = 15000;
-        public static final int CONNECTION_TIMEOUT = 15000;
-
+    class postConnectRequest extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
-            String responseString = "";
-            String inputLine;
             try {
-                URL myUrl = new URL(REQUEST_URL);
-                HttpURLConnection connection = (HttpURLConnection)
-                        myUrl.openConnection();
-                connection.setRequestMethod(REQUEST_METHOD);
-                connection.setReadTimeout(READ_TIMEOUT);
-                connection.setConnectTimeout(CONNECTION_TIMEOUT);
-                connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-                connection.setRequestProperty("Accept","application/json");
-                connection.setDoOutput(true);
-                connection.setDoInput(true);
+                OkHttpClient client = new OkHttpClient()
+                        .newBuilder()
+                        .connectTimeout(60, TimeUnit.SECONDS)
+                        .writeTimeout(60, TimeUnit.SECONDS)
+                        .readTimeout(60, TimeUnit.SECONDS)
+                        .build();
+                RequestBody formBody = new FormBody.Builder()
+                        .add("ssid", etSSID.getText().toString())
+                        .add("password", etPassword.getText().toString())
+                        .build();
+                Request request = new Request.Builder()
+                        .url("http://192.168.4.1/connect")
+                        .post(formBody)
+                        .build();
 
-                JSONObject jsonParam = new JSONObject();
-                jsonParam.put("name", etSSID.getText().toString());
-                jsonParam.put("password", etPassword.getText().toString());
-
-                DataOutputStream os = new DataOutputStream(connection.getOutputStream());
-                os.writeBytes(jsonParam.toString());
-
-                os.flush();
-                os.close();
-
-                InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
-                BufferedReader reader = new BufferedReader(streamReader);
-                StringBuilder stringBuilder = new StringBuilder();
-                while ((inputLine = reader.readLine()) != null) {
-                    stringBuilder.append(inputLine);
-                }
-                reader.close();
-                streamReader.close();
-                responseString = stringBuilder.toString();
+                Response response = client.newCall(request).execute();
+                return response.body().string();
             } catch (IOException e) {
                 e.printStackTrace();
-                responseString = null;
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-            return responseString;
+            return "Error";
         }
 
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Log.i("TAG", "onPostExecute: " + result);
+            Log.i(AddWifiActivity.class.toString(), "onPostExecute: " + result);
             pDialog.dismiss();
             AlertDialog.Builder builder = new AlertDialog.Builder(AddWifiActivity.this);
             builder.setTitle("Add WiFi");
@@ -133,9 +108,7 @@ public class AddWifiActivity extends AppCompatActivity {
                 builder.setMessage("Connected.");
                 builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+                        finish();
                     }
                 });
             } else {
