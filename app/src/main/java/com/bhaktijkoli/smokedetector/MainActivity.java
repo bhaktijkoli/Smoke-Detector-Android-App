@@ -1,5 +1,6 @@
 package com.bhaktijkoli.smokedetector;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,8 +19,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity {
     MQTTHelper mqttHelper;
+    ProgressDialog pDialog;
 
 
     @Override
@@ -30,7 +36,12 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mqttHelper = new MQTTHelper(getApplicationContext());
-        new HttpGetRequest().execute();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(pDialog != null && pDialog.isShowing()) pDialog.dismiss();
     }
 
     @Override
@@ -49,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            pDialog = new ProgressDialog(this);
+            pDialog.setMessage("Please wait...");
+            pDialog.setCanceledOnTouchOutside(false);
+            pDialog.show();
+            new HttpGetRequest().execute();
             return true;
         }
 
@@ -57,46 +73,28 @@ public class MainActivity extends AppCompatActivity {
 
 
     class HttpGetRequest extends AsyncTask<String, Void, String> {
-        public static final String REQUEST_URL = "http://192.168.4.1/";
-        public static final String REQUEST_METHOD = "GET";
-        public static final int READ_TIMEOUT = 5000;
-        public static final int CONNECTION_TIMEOUT = 15000;
-
         @Override
         protected String doInBackground(String... params) {
-            String result;
-            String inputLine;
             try {
-                URL myUrl = new URL(REQUEST_URL);
-                HttpURLConnection connection = (HttpURLConnection)
-                        myUrl.openConnection();
-                connection.setRequestMethod(REQUEST_METHOD);
-                connection.setReadTimeout(READ_TIMEOUT);
-                connection.setConnectTimeout(CONNECTION_TIMEOUT);
+                OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url("http://192.168.4.1/")
+                        .build();
 
-                connection.connect();
-                InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
-                BufferedReader reader = new BufferedReader(streamReader);
-                StringBuilder stringBuilder = new StringBuilder();
-                while ((inputLine = reader.readLine()) != null) {
-                    stringBuilder.append(inputLine);
-                }
-                reader.close();
-                streamReader.close();
-                result = stringBuilder.toString();
+                Response response = client.newCall(request).execute();
+                return response.body().string();
             } catch (IOException e) {
                 e.printStackTrace();
-                result = null;
             }
-            return result;
+            return "";
         }
 
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             if (result != null && result.equals("1")) {
-
                 Intent intent = new Intent(getApplicationContext(), AddWifiActivity.class);
                 startActivity(intent);
+            } else {
             }
         }
     }
