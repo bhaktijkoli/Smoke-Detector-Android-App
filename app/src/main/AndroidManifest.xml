@@ -29,6 +29,10 @@
         <activity
             android:name=".AddWifiActivity"
             android:label="@string/title_activity_add_wifi"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".WifiScanActivity"
+            android:label="@string/title_activity_wifi_scan"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

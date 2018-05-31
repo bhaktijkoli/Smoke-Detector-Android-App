@@ -2,5 +2,6 @@
     <string name="app_name">Smoke Detector</string>
     <string name="action_settings">WiFi Configuration</string>
     <string name="title_activity_wifi">Wifi Configuration</string>
-    <string name="title_activity_add_wifi">Add WiFi</string>
+    <string name="title_activity_add_wifi">Wifi Configuration</string>
+    <string name="title_activity_wifi_scan">Wifi Configuration</string>
 </resources>

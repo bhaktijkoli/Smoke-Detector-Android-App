@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             if (result != null && result.equals("1")) {
-                Intent intent = new Intent(getApplicationContext(), AddWifiActivity.class);
+                Intent intent = new Intent(getApplicationContext(), WifiScanActivity.class);
                 startActivity(intent);
             } else {
             }
