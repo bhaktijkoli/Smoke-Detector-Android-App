@@ -43,6 +43,9 @@ public class AddWifiActivity extends AppCompatActivity {
         toolbar.setTitle("WiFi Configuration");
         toolbar.setSubtitle("Add WiFi");
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         etSSID = (EditText) findViewById(R.id.etSSID);
         etPassword = (EditText) findViewById(R.id.etPassword);
         checkShowPassword = (CheckBox) findViewById(R.id.checkShowPassword);
@@ -69,6 +72,11 @@ public class AddWifiActivity extends AppCompatActivity {
                 new postConnectRequest().execute();
             }
         });
+    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     class postConnectRequest extends AsyncTask<String, String, String> {
