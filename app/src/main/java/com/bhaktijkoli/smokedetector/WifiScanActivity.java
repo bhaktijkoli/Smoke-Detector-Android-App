@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,6 +87,7 @@ public class WifiScanActivity extends AppCompatActivity {
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
         new HttpGetRequest().execute();
+        Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
     }
 
     class HttpGetRequest extends AsyncTask<String, Void, String> {
@@ -111,7 +113,7 @@ public class WifiScanActivity extends AppCompatActivity {
                 JSONObject jsonObject = new JSONObject(result);
                 JSONArray jsonArray = jsonObject.getJSONArray("networks");
                 Log.i(WifiScanActivity.class.toString(), "Network Scanned: " + jsonArray.toString());
-                rvWifiList.setAdapter(new WifiListAdapter(jsonArray));
+                rvWifiList.setAdapter(new WifiListAdapter(WifiScanActivity.this, jsonArray));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
