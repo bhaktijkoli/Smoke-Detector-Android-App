@@ -32,7 +32,7 @@ public class WifiConnectRequest {
         this.name = name;
         this.password = password;
         progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Please wait...");
+        progressDialog.setMessage("Connecting to " + name + " ...");
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
         new postConnectRequest().execute();
