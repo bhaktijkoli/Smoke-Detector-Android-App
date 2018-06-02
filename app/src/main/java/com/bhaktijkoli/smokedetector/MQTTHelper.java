@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -18,6 +19,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 /**
  * Created by bhaktij on 24/05/18.
@@ -27,8 +29,6 @@ public class MQTTHelper {
     public MqttAndroidClient mqttAndroidClient;
 
     final String serverUri = "tcp://bhkautomation.tk:3011";
-
-    final String clientId = "AndroidClient";
     final String subscriptionTopic = "/admin/smoke/";
 
     final String username = "admin";
@@ -40,8 +40,8 @@ public class MQTTHelper {
     private static final String NOTIFICATION_CHANNEL_ID = "my_notification_channel";
 
     public MQTTHelper(final Context context){
-
-        mqttAndroidClient = new MqttAndroidClient(context, serverUri, clientId);
+        String clientId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        mqttAndroidClient = new MqttAndroidClient(context, serverUri, clientId, new MemoryPersistence(), MqttAndroidClient.Ack.AUTO_ACK);
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean b, String s) {
